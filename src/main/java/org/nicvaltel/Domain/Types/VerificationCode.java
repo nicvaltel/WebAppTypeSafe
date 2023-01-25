@@ -11,4 +11,9 @@ public class VerificationCode {
     public String getCode() {
         return code;
     }
+
+    @Override
+    public String toString() {
+        return "VerificationCode {" + code + "}";
+    }
 }

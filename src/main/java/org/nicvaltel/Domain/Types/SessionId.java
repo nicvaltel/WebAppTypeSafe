@@ -11,4 +11,9 @@ public class SessionId {
     public String getSessionId() {
         return sessionId;
     }
+
+    @Override
+    public String toString() {
+        return "SessionId {" + sessionId + "}";
+    }
 }

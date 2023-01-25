@@ -1,10 +1,8 @@
-package org.nicvaltel.test;
+package org.nicvaltel.playground;
 
+import org.nicvaltel.Adapter.InMemory.AuthInMemory;
 import org.nicvaltel.Domain.AuthenticationAbstract;
-import org.nicvaltel.Domain.Types.Auth;
-import org.nicvaltel.Domain.Types.Email;
-import org.nicvaltel.Domain.Types.Password;
-import org.nicvaltel.Domain.Types.ValidationFunc;
+import org.nicvaltel.Domain.Types.*;
 import org.nicvaltel.Domain.Validation;
 
 import java.util.ArrayList;
@@ -13,9 +11,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static org.nicvaltel.Common.Common.println;
+
 public class Test {
 
-    final static AuthenticationAbstract authentication = new org.nicvaltel.Adapter.InMemory.Auth();
+    final static AuthenticationAbstract authentication = new AuthInMemory();
 
 
     private static List<String> validateCheck() {
@@ -58,7 +58,12 @@ public class Test {
         Email email = authentication.mkEmail("test@example.org").right().get();
         Password password = authentication.mkPassword("1234ABCdef").right().get();
         Auth auth = new Auth(email, password);
-        authentication.register(auth);
+        println(authentication.addAuth(auth));
+        println(authentication.findUserByAuth(auth));
+        println(authentication.findEmailFromUserId(new UserId(1)));
+        SessionId sessionId = authentication.newSession(new UserId(1));
+        println(sessionId);
+        println(authentication.findUserIdBySessionId(sessionId));
 
     }
 
@@ -67,5 +72,9 @@ public class Test {
         mkEmailCheck().forEach(System.out::println);
         mkPasswordCheck().forEach(System.out::println);
         testAuth();
+
+
+
+
     }
 }

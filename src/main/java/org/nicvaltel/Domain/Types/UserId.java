@@ -10,4 +10,18 @@ public class UserId {
     public Integer getUserId() {
         return userId;
     }
+
+    @Override
+    public String toString() {
+        return "UserId {" + userId + "}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof UserId)
+            return ((UserId)obj).getUserId().equals(this.userId);
+        else
+            return false;
+
+    }
 }
