@@ -6,25 +6,24 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class Common {
+    
 
     public static void println(Optional mb){
-        if(mb.isPresent())
-            System.out.println("Just (" + mb.get().toString() + ")");
-        else
-            System.out.println("Nothing");
+        mb.ifPresentOrElse(
+                val -> System.out.println("Just (" + val + ")"),
+                () -> System.out.println("Nothing")
+        );
     }
 
     public static void println(Either either){
-        if (either.right().isPresent() )
-            System.out.println("Right (" + either.right().get().toString() + ")");
-        else
-            System.out.println("Left (" + either.left().get().toString() + ")");
+        String str = either.right().isPresent() ?
+                "Right (" + either.right().get() + ")" :
+                "Left (" + either.left().get() + ")";
+        System.out.println(str);
+
     }
 
     public static void println(Object o){
         System.out.println(o);
     }
-
-
-
 }

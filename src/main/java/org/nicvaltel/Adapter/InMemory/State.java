@@ -27,35 +27,31 @@ public class State {
         this.sessions = new HashMap<>();
     }
 
-    public static State initialState(){
+    static State initialState(){
         return new State();
     }
 
-    public Map<Email, VerificationCode> getNotifications() {
+    Map<Email, VerificationCode> getNotifications() {
         return notifications;
     }
 
-    public Map<SessionId, UserId> getSessions() {
+    Map<SessionId, UserId> getSessions() {
         return sessions;
     }
 
-    public List<Pair<UserId, Auth>> getAuth() {
+    List<Pair<UserId, Auth>> getAuth() {
         return auth;
     }
 
-    public Map<VerificationCode, Email> getUnverifiedEmails() {
+    Map<VerificationCode, Email> getUnverifiedEmails() {
         return unverifiedEmails;
     }
 
-    public Set<Email> getVerifiedEmails() {
+    Set<Email> getVerifiedEmails() {
         return verifiedEmails;
     }
 
-//    public int getUserIdCounter() {
-//        return userIdCounter;
-//    }
-
-    public int incrementUserIdCounter(){
+    int incrementUserIdCounter(){
         userIdCounter++;
         return userIdCounter;
     }

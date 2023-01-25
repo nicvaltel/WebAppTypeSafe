@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Authentication {
+    // Either<A,Void> instead of Optional<A> indicates the success of operation
+
     Either<List<String>, Email> mkEmail(String inputStr);
 
     public String rawEmail(Email email);
