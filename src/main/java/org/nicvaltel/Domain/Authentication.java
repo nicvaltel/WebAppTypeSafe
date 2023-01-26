@@ -1,6 +1,7 @@
 package org.nicvaltel.Domain;
 
 
+import org.nicvaltel.Common.Empty;
 import org.nicvaltel.Domain.Types.*;
 import software.amazon.awssdk.utils.Either;
 
@@ -8,7 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Authentication {
-    // Either<A,Void> instead of Optional<A> indicates the success of operation
+    // Either<A,Empty> instead of Optional<A> indicates the success of operation
+    // Void doesn't work because of Either.right(Void) behaves as Either.right().isPresent = false
 
     Either<List<String>, Email> mkEmail(String inputStr);
 
@@ -18,9 +20,9 @@ public interface Authentication {
 
     Either<List<String>, Password> mkPassword(String passwordStr);
 
-    Either<RegistrationError, Void> register(Auth auth);
+    Either<RegistrationError, Empty> register(Auth auth);
 
-    Either<EmailVerificationError, Void> verifyEmail(VerificationCode vCode);
+    Either<EmailVerificationError, Empty> verifyEmail(VerificationCode vCode);
 
     Optional<Email> getUser(UserId userId);
 

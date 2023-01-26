@@ -72,9 +72,5 @@ public class Test {
         mkEmailCheck().forEach(System.out::println);
         mkPasswordCheck().forEach(System.out::println);
         testAuth();
-
-
-
-
     }
 }

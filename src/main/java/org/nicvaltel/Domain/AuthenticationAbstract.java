@@ -2,6 +2,7 @@ package org.nicvaltel.Domain;
 
 
 import org.javatuples.Pair;
+import org.nicvaltel.Common.Empty;
 import org.nicvaltel.Domain.Types.*;
 import software.amazon.awssdk.utils.Either;
 
@@ -31,10 +32,10 @@ public abstract class AuthenticationAbstract implements Authentication, EmailVer
         Optional<Pair<UserId, Boolean>> user = findUserByAuth(auth);
         Either<LoginError, SessionId> result =
                 user.isPresent() ? // Empty if user is not found
-                        Either.left(LoginErrorInvalidAuth) :
-                        user.get().getValue1() ? // email is verified bool flag
+                        (user.get().getValue1() ? // email is verified bool flag
                                 Either.right(newSession(user.get().getValue0())) :
-                                Either.left(LoginErrorEmailNotVerified);
+                                Either.left(LoginErrorEmailNotVerified)) :
+                        Either.left(LoginErrorInvalidAuth);
         return result;
     }
 
@@ -76,7 +77,7 @@ public abstract class AuthenticationAbstract implements Authentication, EmailVer
     }
 
     @Override
-    public Either<RegistrationError, Void> register(Auth auth) {
+    public Either<RegistrationError, Empty> register(Auth auth) {
         Either<RegistrationError, VerificationCode> vCode = addAuth(auth);
         return vCode.
                 mapRight(vc -> notifyEmailVerification(auth.getAuthEmail(), vc)).
@@ -84,19 +85,8 @@ public abstract class AuthenticationAbstract implements Authentication, EmailVer
     }
 
     @Override
-    public Either<EmailVerificationError, Void> verifyEmail(VerificationCode vCode) {
+    public Either<EmailVerificationError, Empty> verifyEmail(VerificationCode vCode) {
         return setEmailAsVerified(vCode);
     }
 
-//    @Override
-//    public Either<RegistrationError, VerificationCode> addAuth(Auth auth) {
-//        System.out.println("adding auth: " + rawEmail(auth.getAuthEmail()));
-//        return Either.right(new VerificationCode("fake verification code"));
-//    }
-
-//    @Override
-//    public Void notifyEmailVerification(Email email, VerificationCode verificationCode) {
-//        System.out.println("Notify " + rawEmail(email) + " - " + verificationCode);
-//        return null; // It's correct - Void
-//    }
 }

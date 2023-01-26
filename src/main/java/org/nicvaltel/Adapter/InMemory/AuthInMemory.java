@@ -3,6 +3,7 @@ package org.nicvaltel.Adapter.InMemory;
 import com.mifmif.common.regex.Generex;
 import org.javatuples.Pair;
 import org.multiverse.api.StmUtils;
+import org.nicvaltel.Common.Empty;
 import org.nicvaltel.Domain.*;
 import org.nicvaltel.Domain.Types.*;
 import software.amazon.awssdk.utils.Either;
@@ -44,30 +45,30 @@ public class AuthInMemory extends AuthenticationAbstract {
         return result;
     }
 
-    private VerificationCode makeVerificationCode(List<Pair<UserId, Auth>> auths, Auth auth, Email email){
+    private VerificationCode makeVerificationCode(List<Pair<UserId, Auth>> auths, Auth auth, Email email) {
         UserId newUserId = new UserId(state.incrementUserIdCounter());
-        VerificationCode vCode  = new VerificationCode(generexPattern.random());
+        VerificationCode vCode = new VerificationCode(generexPattern.random());
         auths.add(new Pair<>(newUserId, auth));
         state.getUnverifiedEmails().put(vCode, email);
         return vCode;
     }
 
     @Override
-    public Either<EmailVerificationError, Void> setEmailAsVerified(VerificationCode vCode) {
-        Either<EmailVerificationError, Void> result = StmUtils.atomic(() -> {
+    public Either<EmailVerificationError, Empty> setEmailAsVerified(VerificationCode vCode) {
+        Either<EmailVerificationError, Empty> result = StmUtils.atomic(() -> {
             Map<VerificationCode, Email> unverifiedEmails = state.getUnverifiedEmails();
             Set<Email> verifiedEmails = state.getVerifiedEmails();
 
             Optional<Email> maybeEmail = Optional.ofNullable(unverifiedEmails.get(vCode));
 
-            Optional<Void> maybeVoid = maybeEmail.map((email) -> {
+            Optional<Empty> maybeVoid = maybeEmail.map((email) -> {
                 unverifiedEmails.remove(email);
                 verifiedEmails.add(email);
-                return null;
+                return Empty.INSTANCE;
             });
 
             return maybeVoid.
-                    map(Either::<EmailVerificationError, Void>right).
+                    map(Either::<EmailVerificationError, Empty>right).
                     orElseGet(() -> Either.left(EmailVerificationErrorInvalidCode));
         });
 
@@ -75,7 +76,7 @@ public class AuthInMemory extends AuthenticationAbstract {
     }
 
     @Override
-    public Optional<Pair<UserId,Boolean>> findUserByAuth (Auth auth){
+    public Optional<Pair<UserId, Boolean>> findUserByAuth(Auth auth) {
         List<Pair<UserId, Auth>> auths = state.getAuth();
         Set<Email> verifiedEmails = state.getVerifiedEmails();
 
@@ -84,7 +85,7 @@ public class AuthInMemory extends AuthenticationAbstract {
                 .findAny()
                 .map(Pair::getValue0);
 
-        Optional<Pair<UserId,Boolean>> result = maybeUserId.
+        Optional<Pair<UserId, Boolean>> result = maybeUserId.
                 map(uId -> new Pair<>(uId, verifiedEmails.contains(auth.getAuthEmail())));
 
         return result;
@@ -102,12 +103,11 @@ public class AuthInMemory extends AuthenticationAbstract {
     }
 
 
-
     @Override
     public SessionId newSession(UserId userId) {
         SessionId sId = new SessionId(userId.getUserId() + "-" + generexPattern.random());
-        StmUtils.atomic(() ->{
-            Map<SessionId,UserId> sessions = state.getSessions();
+        StmUtils.atomic(() -> {
+            Map<SessionId, UserId> sessions = state.getSessions();
             sessions.put(sId, userId);
         });
         return sId;
@@ -115,19 +115,20 @@ public class AuthInMemory extends AuthenticationAbstract {
 
     @Override
     public Optional<UserId> findUserIdBySessionId(SessionId sessionId) {
-        Map<SessionId,UserId> sessions = state.getSessions();
+        Map<SessionId, UserId> sessions = state.getSessions();
         return Optional.ofNullable(sessions.get(sessionId));
     }
 
     @Override
-    public Void notifyEmailVerification(Email email, VerificationCode verificationCode) {
+    public Empty notifyEmailVerification(Email email, VerificationCode verificationCode) {
         StmUtils.atomic(() -> {
             Map<Email, VerificationCode> notifications = state.getNotifications();
             notifications.put(email, verificationCode);
         });
-        return null;
+        return Empty.INSTANCE;
     }
-    public Optional<VerificationCode> getNotificationsForEmail(Email email){
+
+    public Optional<VerificationCode> getNotificationsForEmail(Email email) {
         Map<Email, VerificationCode> notifications = state.getNotifications();
         return Optional.ofNullable(notifications.get(email));
     }

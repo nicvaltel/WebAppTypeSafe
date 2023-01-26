@@ -12,18 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public interface Validation{
+public interface Validation {
 
-    static private Optional<String> rngBetween (int minRange, int maxRange, int val, String msg) {
+    static private Optional<String> rngBetween(int minRange, int maxRange, int val, String msg) {
         return (val >= minRange && val <= maxRange) ? Optional.empty() : Optional.of(msg);
     }
-
-
-//    static ValidationFunc<String, Integer> rangeBetween(int minRange, int maxRange, String errorMsg) {
-//        Function<Integer, Optional<String>> validation = (Integer val) ->
-//                rngBetween(minRange, maxRange, val, errorMsg);
-//        return new ValidationFunc(validation);
-//    }
 
     static ValidationFunc<String, String> lengthBetween(int minLen, int maxLen, String errorMsg) {
         Function<String, Optional<String>> validation = (String val) ->
@@ -31,7 +24,7 @@ public interface Validation{
         return new ValidationFunc(validation);
     }
 
-    static ValidationFunc<String, String> regexMatches (String regex, String errorMsg) {
+    static ValidationFunc<String, String> regexMatches(String regex, String errorMsg) {
         Function<String, Optional<String>> validation = s -> {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(s);
@@ -39,7 +32,8 @@ public interface Validation{
         };
         return new ValidationFunc(validation);
     }
-    static Either<List<String>,Email> validateEmail (Function<String, Email> constructor, List<ValidationFunc<String,String>> validations, String value){
+
+    static Either<List<String>, Email> validateEmail(Function<String, Email> constructor, List<ValidationFunc<String, String>> validations, String value) {
         List<String> errors = validations.stream().
                 map(f -> f.apply(value)).
                 filter(Optional::isPresent).
@@ -49,7 +43,7 @@ public interface Validation{
         return errors.isEmpty() ? Either.right(constructor.apply(value)) : Either.left(errors);
     }
 
-    static Either<List<String>,Password> validatePassword (Function<String, Password> constructor, List<ValidationFunc<String,String>> validations, String value){
+    static Either<List<String>, Password> validatePassword(Function<String, Password> constructor, List<ValidationFunc<String, String>> validations, String value) {
         List<String> errors = validations.stream().
                 map(f -> f.apply(value)).
                 filter(Optional::isPresent).
