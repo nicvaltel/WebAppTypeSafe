@@ -15,7 +15,7 @@ import static org.nicvaltel.Common.Common.println;
 
 public class Test {
 
-    final static AuthenticationAbstract authentication = new AuthInMemory();
+    final static AuthenticationAbstract authentication = AuthInMemory.INSTANCE;
 
 
     private static List<String> validateCheck() {

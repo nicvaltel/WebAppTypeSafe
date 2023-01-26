@@ -17,11 +17,13 @@ import static org.nicvaltel.Domain.Types.RegistrationError.*;
 
 public class AuthInMemory extends AuthenticationAbstract {
 
+    public static final AuthInMemory INSTANCE = new AuthInMemory();
+
     private State state;
 
     private Generex generexPattern = new Generex("[A-Za-z0-9]{16}");
 
-    public AuthInMemory() {
+    private AuthInMemory() {
         state = State.initialState();
     }
 

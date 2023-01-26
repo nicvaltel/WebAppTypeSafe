@@ -19,11 +19,11 @@ public interface Validation{
     }
 
 
-    static ValidationFunc<String, Integer> rangeBetween(int minRange, int maxRange, String errorMsg) {
-        Function<Integer, Optional<String>> validation = (Integer val) ->
-                rngBetween(minRange, maxRange, val, errorMsg);
-        return new ValidationFunc(validation);
-    }
+//    static ValidationFunc<String, Integer> rangeBetween(int minRange, int maxRange, String errorMsg) {
+//        Function<Integer, Optional<String>> validation = (Integer val) ->
+//                rngBetween(minRange, maxRange, val, errorMsg);
+//        return new ValidationFunc(validation);
+//    }
 
     static ValidationFunc<String, String> lengthBetween(int minLen, int maxLen, String errorMsg) {
         Function<String, Optional<String>> validation = (String val) ->
